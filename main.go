@@ -1,20 +1,17 @@
 package main
 
 import (
-	"fmt"
 	"gee"
 	"net/http"
 )
 
 func main() {
 	engine := gee.New()
-	engine.GET("/", func(writer http.ResponseWriter, request *http.Request) {
-		fmt.Fprintf(writer, "URL.Path = %q\n", request.URL.Path)
+	engine.GET("/", func(ctx *gee.Context) {
+		ctx.HTML(http.StatusOK, "<h1>Hello Gee</h1>")
 	})
-	engine.GET("/hello", func(writer http.ResponseWriter, request *http.Request) {
-		for k, v := range request.Header {
-			fmt.Fprintf(writer, "Header[%q] = %q\n", k, v)
-		}
+	engine.GET("/hello", func(ctx *gee.Context) {
+		ctx.String(http.StatusOK, "hello %s, you're at %s\n", ctx.Query("name"), ctx.Path)
 	})
 	err := engine.Run(":9000")
 	if err != nil {
